@@ -20,12 +20,19 @@ class PaymentController {
     private final RestClient merchantClient;
 
     PaymentController(JdbcTemplate jdbc, KafkaTemplate<Object, Object> kafka, Environment env) {
+        this(jdbc, kafka,
+            RestClient.builder()
+                .baseUrl(env.getProperty("CUSTOMER_SERVICE_URL", "http://localhost:8081")).build(),
+            RestClient.builder()
+                .baseUrl(env.getProperty("MERCHANT_SERVICE_URL", "http://localhost:8082")).build());
+    }
+
+    PaymentController(JdbcTemplate jdbc, KafkaTemplate<Object, Object> kafka,
+                      RestClient customerClient, RestClient merchantClient) {
         this.jdbc = jdbc;
         this.kafka = kafka;
-        this.customerClient = RestClient.builder()
-            .baseUrl(env.getProperty("CUSTOMER_SERVICE_URL", "http://localhost:8081")).build();
-        this.merchantClient = RestClient.builder()
-            .baseUrl(env.getProperty("MERCHANT_SERVICE_URL", "http://localhost:8082")).build();
+        this.customerClient = customerClient;
+        this.merchantClient = merchantClient;
     }
 
     @PostMapping("/api/payments")

@@ -105,7 +105,7 @@ const navItems = [
   { id: "activity", label: "Transactions", icon: History }
 ];
 
-function App() {
+export function App() {
   const [session, setSession] = useState(() => {
     try { return JSON.parse(localStorage.getItem("quickpay-session") || "null"); }
     catch { return null; }
@@ -266,4 +266,5 @@ function TransactionList({ transactions }) {
   return <div className="transaction-list">{transactions.map((transaction) => <div className="transaction-row" key={transaction.id || transaction.paymentId}><span className="transaction-merchant-icon"><Store size={17} /></span><span className="transaction-name"><b>{transaction.merchantName}</b><small>{new Date(transaction.createdAt || Date.now()).toLocaleString(undefined, { month: "short", day: "numeric", year: "numeric", hour: "numeric", minute: "2-digit" })}</small></span><span className="transaction-status"><i /> {transaction.status?.toLowerCase() || "completed"}</span><span className="transaction-amount">−{money(transaction.amount)}</span></div>)}</div>;
 }
 
-createRoot(document.getElementById("root")).render(<App />);
+const rootElement = document.getElementById("root");
+if (rootElement) createRoot(rootElement).render(<App />);
